@@ -17,7 +17,6 @@ import Text.Parsec.Char
 import Data.Functor (void)
 import System.Process.Typed (readProcessStdout, shell)
 import System.Exit (ExitCode(..))
-import Data.String.Conv (toS)
 
 type ExecutableFile = FilePath
 type SavedListFile = FilePath
