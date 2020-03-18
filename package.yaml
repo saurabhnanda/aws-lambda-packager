@@ -1,0 +1,26 @@
+name:                aws-lambda-packager
+version:             0.1.0.0
+#synopsis:
+#description:
+homepage:            https://github.com/saurabhnanda/aws-lambda-packager#readme
+license:             BSD3
+author:              Saurabh Nanda
+maintainer:          saurabhnanda@gmail.com
+copyright:           Saurabh Nanda
+category:            Web
+extra-source-files:
+- README.md
+
+dependencies:
+  - base >= 4.7 && < 5
+  - typed-process
+  - directory
+  - unix
+  - optparse-applicative
+  - directory-tree
+  - parsec
+
+executables:
+  aws-lambda-packager:
+    source-dirs:      src
+    main:             Main.hs
