@@ -5,8 +5,7 @@
 module Main where
 
 -- import System.Process.Typed
-import System.Directory (copyFile)
-import System.Posix.Files (isDirectory)
+import System.Directory (copyFileWithMetadata, createDirectoryIfMissing)
 import Options.Applicative as Opt
 import Control.Monad
 import System.Directory.Tree
@@ -17,6 +16,7 @@ import Text.Parsec.Char
 import Data.Functor (void)
 import System.Process.Typed (readProcessStdout, shell)
 import System.Exit (ExitCode(..))
+import System.FilePath.Posix (takeFileName, (</>))
 
 type ExecutableFile = FilePath
 type SavedListFile = FilePath
@@ -199,8 +199,9 @@ missingLibraryList listFile reqd = do
 copyLibraries :: FilePath
               -> [FilePath]
               -> IO ()
-copyLibraries d fs =
-  forM_ fs $ \f -> copyFile f d
+copyLibraries d fs = do
+  createDirectoryIfMissing True d
+  forM_ fs $ \f -> copyFileWithMetadata f (d </> takeFileName f)
 
 printList :: [String] -> IO ()
 printList xs = forM_ xs putStrLn

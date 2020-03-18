@@ -15,10 +15,10 @@ dependencies:
   - base >= 4.7 && < 5
   - typed-process
   - directory
-  - unix
   - optparse-applicative
   - directory-tree
   - parsec
+  - filepath
 
 executables:
   aws-lambda-packager:
