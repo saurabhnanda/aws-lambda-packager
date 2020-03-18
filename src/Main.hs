@@ -202,8 +202,8 @@ copyLibraries :: FilePath
 copyLibraries d fs =
   forM_ fs $ \f -> copyFile f d
 
-printList :: (Show a) => [a] -> IO ()
-printList xs = forM_ xs (putStrLn . show)
+printList :: [String] -> IO ()
+printList xs = forM_ xs putStrLn
 
 main :: IO ()
 main = (execParser cliArgsParserOpts) >>= \case
