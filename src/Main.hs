@@ -212,6 +212,6 @@ main = (execParser cliArgsParserOpts) >>= \case
   CmdSaveLibraryList listArgs ->
     saveLibraryList $ applyDefaults listArgs
   CmdPrintCustomLibraries listFile exeFile ->
-    (getLddOutput listFile) >>= (missingLibraryList listFile) >>= printList
+    (getLddOutput exeFile) >>= (missingLibraryList listFile) >>= printList
   CmdCopyCustomLibraries listFile exeFile outputDir ->
     (getLddOutput listFile) >>= (missingLibraryList listFile) >>= (copyLibraries outputDir)
