@@ -2,5 +2,6 @@ resolver: lts-12.1
 
 packages:
 - git: https://github.com/saurabhnanda/aws-lambda-packager.git
-  commit: d3312736a38f7b93f87c313a8fb9c0798938b403
+  commit: 5114cd0d7ab0759ea914a8de3851eee0b57882a8
+
 
