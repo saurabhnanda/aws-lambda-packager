@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a8eaccfe0c47c4f62c476941eefad3ee6756b37b6e6cc1aaaedee10e91d7cf22
+-- hash: 9d37c4e4e3303fcc5fd7278218c9f03e7ee0f6662da0e40e031b558bf663c727
 
 name:           aws-lambda-packager
 version:        0.1.0.0
@@ -44,7 +44,8 @@ executable aws-lambda-packager
   hs-source-dirs:
       app
   build-depends:
-      base >=4.7 && <5
+      aws-lambda-packager
+    , base >=4.7 && <5
     , bytestring
     , directory
     , directory-tree

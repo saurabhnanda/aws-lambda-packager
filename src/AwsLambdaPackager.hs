@@ -59,6 +59,10 @@ lddOutputParser = Parsec.many $ choice [ try lddNameAndPath
                                        , try lddOnlyName
                                        ]
 
+parseLddOutput :: BSL.ByteString
+               -> Either ParseError [LddLine]
+parseLddOutput = parse lddOutputParser ""
+
 missingLibraryList :: SavedListFile
                    -> [LddLine]
                    -> IO [FilePath]
@@ -70,7 +74,3 @@ missingLibraryList listFile reqd = do
       LddOnlyName _ -> []
       LddOnlyPath _ -> []
       LddNameAndPath n p -> [p]
-
-parseLddOutput :: BSL.ByteString
-               -> Either ParseError [LddLine]
-parseLddOutput = parse lddOutputParser ""

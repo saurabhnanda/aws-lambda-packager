@@ -24,8 +24,12 @@ dependencies:
 library:
   source-dirs:
     - src
+  exposed-modules:
+    - AwsLambdaPackager
 
 executables:
   aws-lambda-packager:
     source-dirs:      app
     main:             Main.hs
+    dependencies:
+      - aws-lambda-packager
