@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.2.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 83802556b1bd3f9ca2b4f77febd5f7f59f7f9d79a442a3f5806385e3065e0038
+-- hash: a8eaccfe0c47c4f62c476941eefad3ee6756b37b6e6cc1aaaedee10e91d7cf22
 
 name:           aws-lambda-packager
 version:        0.1.0.0
@@ -19,14 +19,33 @@ build-type:     Simple
 extra-source-files:
     README.md
 
-executable aws-lambda-packager
-  main-is: Main.hs
+library
+  exposed-modules:
+      AwsLambdaPackager
   other-modules:
       Paths_aws_lambda_packager
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
+    , bytestring
+    , directory
+    , directory-tree
+    , filepath
+    , optparse-applicative
+    , parsec
+    , typed-process
+  default-language: Haskell2010
+
+executable aws-lambda-packager
+  main-is: Main.hs
+  other-modules:
+      Paths_aws_lambda_packager
+  hs-source-dirs:
+      app
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
     , directory
     , directory-tree
     , filepath

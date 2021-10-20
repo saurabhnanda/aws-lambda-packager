@@ -19,8 +19,13 @@ dependencies:
   - directory-tree
   - parsec
   - filepath
+  - bytestring
+
+library:
+  source-dirs:
+    - src
 
 executables:
   aws-lambda-packager:
-    source-dirs:      src
+    source-dirs:      app
     main:             Main.hs

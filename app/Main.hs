@@ -11,15 +11,13 @@ import Control.Monad
 import System.Directory.Tree
 import System.IO
 import qualified Data.List as DL
-import Text.Parsec as Parsec hiding ((<|>))
-import Text.Parsec.Char
 import Data.Functor (void)
 import System.Process.Typed (readProcessStdout, shell)
 import System.Exit (ExitCode(..))
 import System.FilePath.Posix (takeFileName, (</>))
+import AwsLambdaPackager
 
 type ExecutableFile = FilePath
-type SavedListFile = FilePath
 type OutputDir = FilePath
 
 data CliCommand = CmdShowDefaults
@@ -111,55 +109,7 @@ applyDefaults x@ListArgs{..} = case argIgnoreDefaultDirs of
   True -> x
   False -> x{argLibDirs=argLibDirs ++ defaultLibDirs}
 
-data LddLine = LddOnlyName String
-             | LddOnlyPath String
-             | LddNameAndPath String String
-             deriving (Eq, Show)
 
-hexChecksum :: (Stream s m Char) => ParsecT s u m String
-hexChecksum = do
-  string "(0x"
-  checksum <- Parsec.many (satisfy (/= ')'))
-  pure $ "(0x" <> checksum
-
-lddNameAndPath :: (Stream s m Char) => ParsecT s u m LddLine
-lddNameAndPath = do
-  spaces
-  libName <- Parsec.many (satisfy (/= ' '))
-  spaces
-  void $ string "=>"
-  spaces
-  libPath <- Parsec.many (satisfy (/= ' '))
-  spaces
-  void hexChecksum
-  manyTill anyChar endOfLine
-  pure $ LddNameAndPath libName libPath
-
-lddOnlyName :: (Stream s m Char) => ParsecT s u m LddLine
-lddOnlyName = do
-  spaces
-  libName <- Parsec.many (satisfy (/= ' '))
-  spaces
-  void $ string "=>"
-  spaces
-  void hexChecksum
-  manyTill anyChar endOfLine
-  pure $ LddOnlyName libName
-
-lddOnlyPath :: (Stream s m Char) => ParsecT s u m LddLine
-lddOnlyPath = do
-  spaces
-  libName <- Parsec.many (satisfy (/= ' '))
-  spaces
-  void hexChecksum
-  manyTill anyChar endOfLine
-  pure $ LddOnlyPath libName
-
-lddOutputParser :: (Stream s m Char) => ParsecT s u m [LddLine]
-lddOutputParser = Parsec.many $ choice [ try lddNameAndPath
-                                       , try lddOnlyPath
-                                       , try lddOnlyName
-                                       ]
 
 
 ----
@@ -171,7 +121,7 @@ getLddOutput fname = do
   (ex, o) <- readProcessStdout (shell cmd)
   case ex of
     ExitFailure e -> error $ "ldd (commmand, error): ("  <> cmd <> ", " <> show e <> ")"
-    ExitSuccess -> case parse lddOutputParser "" o of
+    ExitSuccess -> case parseLddOutput o of
       Left e -> error $ show e
       Right r -> pure r
   where
@@ -183,18 +133,6 @@ saveLibraryList ListArgs{..} =
   withFile argOutputFile WriteMode $ \outFile -> do
     void $ forM argLibDirs $ readDirectoryWith $ \fname -> do
       hPutStrLn outFile (fname `seq` fname)
-
-missingLibraryList :: SavedListFile
-                   -> [LddLine]
-                   -> IO [FilePath]
-missingLibraryList listFile reqd = do
-  preInstalled <- lines <$> (readFile listFile)
-  pure $ (DL.\\) (DL.concatMap extractPath reqd) preInstalled
-  where
-    extractPath x = case x of
-      LddOnlyName _ -> []
-      LddOnlyPath _ -> []
-      LddNameAndPath n p -> [p]
 
 copyLibraries :: FilePath
               -> [FilePath]
